@@ -30,18 +30,16 @@ sono iscritti e il relativo dipartimento, in ordine alfabetico per cognome e
 nome
 
 Query 4:
-SELECT * 
-FROM `students` 
-JOIN `degrees`
-ON `students`.`degree_id` = `degrees`.`id`
-JOIN `departments`
-ON `degrees`.`department_id` = `departments`.`id`
-ORDER BY `students`.`surname` ASC, `students`.`name` ASC;
+SELECT `students`. `surname`, `students`.`name`, `degrees`.`name`, `departments`.`name`
+FROM `students`
+JOIN `degrees` ON `students`.`degree_id` = `degrees`.`id`
+JOIN `departments` ON `degrees`.`department_id` = `departments`.`id`
+ORDER BY `students`.`surname`, `students`.`name`;
 
 5. Selezionare tutti i corsi di laurea con i relativi corsi e insegnanti
 
 Query 5:
-SELECT `degrees`.`name`, `courses`.`name`, `teachers`.`name`, `teachers`.`surname`
+SELECT `teachers`.`name` AS 'Nomi insegnanti', `teachers`.`surname` AS 'Cognomi insegnanti', `degrees`.`name` AS 'Nomi Facoltà', `courses`.`name` AS 'Nomi Corsi'
 FROM `degrees`
 JOIN `courses` ON `degrees`.`id` = `courses`.`degree_id`
 JOIN `teachers` ON `courses`.`id` = `teachers`.`id`;
@@ -61,3 +59,12 @@ WHERE `departments`.`name` = 'Dipartimento di Matematica';
 7. BONUS: Selezionare per ogni studente il numero di tentativi sostenuti
 per ogni esame, stampando anche il voto massimo. Successivamente,
 filtrare i tentativi con voto minimo 18.
+
+Query 7:
+SELECT `students`.`name`, `students`.`surname`, `courses`.`name`, COUNT(`exams`.`id`) AS 'Tentativi', MAX(`exam_student`.`vote`) AS 'Voto massimo'
+FROM `students`
+JOIN `exam_student` ON `exam_student`.`student_id` = `students`.`id`
+JOIN `exams` ON `exam_student`.`exam_id` = `exams`.`id`
+JOIN `courses` ON `exams`.`course_id` = `courses`.`id`
+GROUP BY `students`.`id`, `courses`.`id`
+HAVING `Voto massimo`>= '18';
